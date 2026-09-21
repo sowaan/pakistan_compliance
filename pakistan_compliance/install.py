@@ -174,15 +174,28 @@ def ensure_custom_fields():
 		_place_party_section(doctype)
 
 
-# DocType -> the Pakistan print format that should be its default.
+# DocType -> the Pakistan print format that should be its default on install.
+# (The Credit Note shares the Sales Invoice DocType with the invoice, which already
+# owns that default, so it stays a manually selectable format.)
 DEFAULT_PRINT_FORMATS = {
 	"Sales Invoice": "FBR Sales Tax Invoice",
+	"Sales Order": "Pakistan Sales Order",
+	"Delivery Note": "Pakistan Delivery Challan",
+	"Purchase Order": "Pakistan Purchase Order",
+	"Quotation": "Pakistan Quotation",
+	"Payment Entry": "Pakistan Payment Voucher",
 }
 
 
-def ensure_default_print_formats():
+def ensure_default_print_formats(force=False):
 	"""Make each Pakistan print format the default for its DocType, via a durable
-	Property Setter. Idempotent."""
+	Property Setter.
+
+	On install (force=True) we set our format as the default even if the DocType
+	already has one, so a fresh install gets the Pakistan formats instead of the
+	ERPNext framework defaults (e.g. 'Sales Order with Item Image'). On migrate
+	(force=False) we only set a default when the DocType has none, so a customer who
+	later picks their own default (or clears ours) is never overridden on upgrade."""
 	for doctype, print_format in DEFAULT_PRINT_FORMATS.items():
 		if not (frappe.db.exists("DocType", doctype) and frappe.db.exists("Print Format", print_format)):
 			continue
@@ -192,9 +205,11 @@ def ensure_default_print_formats():
 			["name", "value"],
 			as_dict=True,
 		)
-		if existing and existing.value == print_format:
-			continue
 		if existing:
+			if existing.value == print_format:
+				continue
+			if not force:
+				continue  # migrate: respect whatever default is already set
 			frappe.db.set_value("Property Setter", existing.name, "value", print_format)
 		else:
 			make_property_setter(
@@ -220,11 +235,11 @@ def ensure_settings_defaults():
 
 def after_install():
 	ensure_custom_fields()
-	ensure_default_print_formats()
+	ensure_default_print_formats(force=True)
 	ensure_settings_defaults()
 
 
 def after_migrate():
 	ensure_custom_fields()
-	ensure_default_print_formats()
+	ensure_default_print_formats(force=False)
 	ensure_settings_defaults()

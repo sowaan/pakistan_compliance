@@ -7,11 +7,15 @@ later phase before the current phase's acceptance criteria are met, and update t
 marker below when a phase is completed.
 
 **Current Phase:** 3, Print formats (done bar one). Shipped, all sharing one green (#0b6e4f) design
-system: **FBR Sales Tax Invoice**, **FBR Sales Tax Credit Note**, **Pakistan Delivery Challan**,
-**Pakistan Purchase Order**, **Pakistan Quotation**, **Pakistan Payment Voucher** (dynamic
-Receipt/Payment), plus the **Urdu amount-in-words** helper and its toggle. The **Withholding Tax
-Certificate** is the only Phase 3 item left and waits for Phase 4's WHT logic. Next: Phase 4,
-withholding tax and ATL.
+system: **FBR Sales Tax Invoice**, **FBR Sales Tax Credit Note**, **Pakistan Sales Order**,
+**Pakistan Delivery Challan**, **Pakistan Purchase Order**, **Pakistan Quotation**, **Pakistan
+Payment Voucher** (dynamic Receipt/Payment), plus the **Urdu amount-in-words** helper and its toggle.
+Each is set as its DocType's default on install (`ensure_default_print_formats(force=True)` in
+after_install overrides the ERPNext framework default e.g. 'Sales Order with Item Image'); on
+migrate it is force=False so a customer's own default is never overridden. The Credit Note shares
+the Sales Invoice DocType with the invoice (which owns that default), so it stays manually
+selectable. The **Withholding Tax Certificate** is the only Phase 3 item left and waits for Phase
+4's WHT logic. Next: Phase 4, withholding tax and ATL.
 
 Print-format build notes (for the next agent): each format is a standard Jinja Print Format shipped
 as an app file under `print_format/<scrubbed>/`. The print Jinja sandbox exposes only a subset of
