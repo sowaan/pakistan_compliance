@@ -76,11 +76,13 @@ app_license = "mit"
 # Jinja
 # ----------
 
-# add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "pakistan_compliance.utils.jinja_methods",
-# 	"filters": "pakistan_compliance.utils.jinja_filters"
-# }
+# add methods and filters to jinja environment. Each path is registered under
+# the function's own name, so print formats call money_in_words_urdu(...) directly.
+jinja = {
+	"methods": [
+		"pakistan_compliance.utils.money_in_words_urdu",
+	],
+}
 
 # Installation
 # ------------
