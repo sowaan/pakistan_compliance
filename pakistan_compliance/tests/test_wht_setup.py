@@ -11,9 +11,11 @@ editable defaults that must be verified against the current Finance Act, so pinn
 them in a test would give false confidence.
 """
 
+import frappe
 from frappe.tests.utils import FrappeTestCase
 
 from pakistan_compliance import wht_setup
+from pakistan_compliance.wht_setup import propagate_item_wht
 
 
 class TestWhtSetup(FrappeTestCase):
@@ -36,3 +38,30 @@ class TestWhtSetup(FrappeTestCase):
 	def test_rate_window_is_open_ended(self):
 		# to_date is far future so a later invoice never silently computes zero WHT.
 		self.assertGreater(wht_setup.WHT_RATES_TO, wht_setup.WHT_RATES_FROM)
+
+
+class TestWhtPropagation(FrappeTestCase):
+	"""The v16 supplier -> item WHT propagation hook (no-op on v15)."""
+
+	def _pi(self):
+		pi = frappe.new_doc("Purchase Invoice")
+		pi.apply_tds = 1
+		pi.tax_withholding_category = "Pakistan WHT 153(1)(b) Services (Filer)"
+		pi.append("items", {"item_code": "_WHT_TEST", "qty": 1, "rate": 1000})
+		return pi
+
+	def test_propagates_to_items_on_v16(self):
+		pi = self._pi()
+		item_has_field = pi.items[0].meta.has_field("tax_withholding_category")
+		propagate_item_wht(pi)
+		if item_has_field:  # v16
+			self.assertEqual(pi.items[0].tax_withholding_category, pi.tax_withholding_category)
+			self.assertTrue(pi.items[0].apply_tds)
+		else:  # v15: item has no WHT field, hook is a no-op
+			self.assertFalse(pi.items[0].get("tax_withholding_category"))
+
+	def test_noop_when_apply_tds_off(self):
+		pi = self._pi()
+		pi.apply_tds = 0
+		propagate_item_wht(pi)
+		self.assertFalse(pi.items[0].get("tax_withholding_category"))
