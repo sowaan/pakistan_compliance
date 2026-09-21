@@ -1,0 +1,182 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2026-09-21 17:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "sales_invoice",
+  "company",
+  "column_break_head",
+  "status",
+  "environment",
+  "identifiers_section",
+  "fbr_invoice_number",
+  "column_break_ids",
+  "qr_content",
+  "timing_section",
+  "validated_on",
+  "column_break_timing",
+  "reported_on",
+  "payload_section",
+  "request_json",
+  "response_json",
+  "error"
+ ],
+ "fields": [
+  {
+   "default": "FBR-LOG-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "FBR-LOG-.YYYY.-.#####",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Sales Invoice",
+   "options": "Sales Invoice",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "sales_invoice.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Pending\nValidated\nReported\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "environment",
+   "fieldtype": "Select",
+   "label": "Environment",
+   "options": "Sandbox\nProduction",
+   "read_only": 1
+  },
+  {
+   "fieldname": "identifiers_section",
+   "fieldtype": "Section Break",
+   "label": "FBR Identifiers"
+  },
+  {
+   "description": "The Invoice Reference Number (IRN) returned by FBR.",
+   "fieldname": "fbr_invoice_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "FBR Invoice Number (IRN)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ids",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "The string encoded into the printed QR code (usually the FBR invoice number).",
+   "fieldname": "qr_content",
+   "fieldtype": "Small Text",
+   "label": "QR Content",
+   "read_only": 1
+  },
+  {
+   "fieldname": "timing_section",
+   "fieldtype": "Section Break",
+   "label": "Timing"
+  },
+  {
+   "fieldname": "validated_on",
+   "fieldtype": "Datetime",
+   "label": "Validated On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_timing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reported_on",
+   "fieldtype": "Datetime",
+   "label": "Reported On",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "payload_section",
+   "fieldtype": "Section Break",
+   "label": "Payload"
+  },
+  {
+   "fieldname": "request_json",
+   "fieldtype": "Code",
+   "label": "Request JSON",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "response_json",
+   "fieldtype": "Code",
+   "label": "Response JSON",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error",
+   "fieldtype": "Long Text",
+   "label": "Error",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-21 17:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Pakistan Compliance",
+ "name": "FBR Invoice Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
