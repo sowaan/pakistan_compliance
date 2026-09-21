@@ -70,6 +70,30 @@ def fmt_money_abs(value, currency=None):
 	return fmt_money(abs(flt(value)), currency=currency)
 
 
+def qr_png_data_uri(content, box_size=4, border=2):
+	"""Render `content` to a QR code PNG and return it as a data: URI, so print
+	formats can embed the FBR invoice QR inline (no external QR service, no stored
+	file). Returns '' on any failure so a print format never breaks over it."""
+	if not content:
+		return ""
+	try:
+		import base64
+		from io import BytesIO
+
+		import qrcode
+
+		qr = qrcode.QRCode(box_size=box_size, border=border)
+		qr.add_data(content)
+		qr.make(fit=True)
+		img = qr.make_image(fill_color="black", back_color="white")
+		buf = BytesIO()
+		img.save(buf, format="PNG")
+		return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+	except Exception:
+		frappe.log_error(title="Pakistan Compliance: QR render failed")
+		return ""
+
+
 def show_urdu_in_words():
 	"""Whether print formats should render the Urdu amount in words, from the
 	'Show Urdu Amount in Words' toggle on Pakistan Tax Settings. The field default
