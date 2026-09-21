@@ -6,9 +6,20 @@ phase, and a phase-by-phase build plan. Treat the phase list as the backlog: do 
 later phase before the current phase's acceptance criteria are met, and update the "Current Phase"
 marker below when a phase is completed.
 
-**Current Phase:** 3, Print formats (in progress). Done: **FBR Sales Tax Invoice** and the **Urdu
-amount-in-words** helper. Next in Phase 3: Credit/Debit Note, Delivery Challan, Purchase Order,
-Quotation, Payment Voucher; the Withholding Tax Certificate waits for Phase 4's WHT logic.
+**Current Phase:** 3, Print formats (done bar one). Shipped, all sharing one green (#0b6e4f) design
+system: **FBR Sales Tax Invoice**, **FBR Sales Tax Credit Note**, **Pakistan Delivery Challan**,
+**Pakistan Purchase Order**, **Pakistan Quotation**, **Pakistan Payment Voucher** (dynamic
+Receipt/Payment), plus the **Urdu amount-in-words** helper and its toggle. The **Withholding Tax
+Certificate** is the only Phase 3 item left and waits for Phase 4's WHT logic. Next: Phase 4,
+withholding tax and ATL.
+
+Print-format build notes (for the next agent): each format is a standard Jinja Print Format shipped
+as an app file under `print_format/<scrubbed>/`. The print Jinja sandbox exposes only a subset of
+`frappe` (use `frappe.db.get_value`, NOT `frappe.get_cached_value`), plus our own `jinja` methods
+(`money_in_words_urdu`, `show_urdu_in_words`, `fmt_money_abs`) and `frappe.utils.money_in_words` for
+English. Returns/credit notes carry negative amounts, so the credit note uses `fmt_money_abs` and
+`| abs` to print magnitudes. After editing a shipped format's JSON you MUST bump its `modified`
+timestamp or `reload-doc` skips the update.
 
 Phase 3 so far: a standard **"FBR Sales Tax Invoice"** print format (Jinja, shipped as an app
 file under `print_format/fbr_sales_tax_invoice/`) for Sales Invoice: seller and buyer NTN/STRN
