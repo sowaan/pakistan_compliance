@@ -1,7 +1,7 @@
 {
  "app": "pakistan_compliance",
  "charts": [],
- "content": "[{\"id\": \"pk_head\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Pakistan Compliance</b></span>\", \"col\": 12}}, {\"id\": \"pk_sc1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pakistan Tax Settings\", \"col\": 3}}, {\"id\": \"pk_sc2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Taxes and Charges Template\", \"col\": 3}}, {\"id\": \"pk_card_setup\", \"type\": \"card\", \"data\": {\"card_name\": \"Setup\", \"col\": 4}}, {\"id\": \"pk_card_taxes\", \"type\": \"card\", \"data\": {\"card_name\": \"Taxes\", \"col\": 4}}]",
+ "content": "[{\"id\": \"pk_head\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Pakistan Compliance</b></span>\", \"col\": 12}}, {\"id\": \"pk_sc1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pakistan Tax Settings\", \"col\": 3}}, {\"id\": \"pk_sc2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Taxes and Charges Template\", \"col\": 3}}, {\"id\": \"pk_card_setup\", \"type\": \"card\", \"data\": {\"card_name\": \"Setup\", \"col\": 4}}, {\"id\": \"pk_card_taxes\", \"type\": \"card\", \"data\": {\"card_name\": \"Taxes\", \"col\": 4}}, {\"id\": \"pk_card_wht\", \"type\": \"card\", \"data\": {\"card_name\": \"Withholding Tax\", \"col\": 4}}, {\"id\": \"pk_card_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"Reports\", \"col\": 4}}]",
  "creation": "2026-09-21 13:06:27.796681",
  "custom_blocks": [],
  "docstatus": 0,
@@ -81,9 +81,87 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Withholding Tax",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tax Withholding Category",
+   "link_count": 0,
+   "link_to": "Tax Withholding Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Withholding Tax Certificate",
+   "link_count": 0,
+   "link_to": "Withholding Tax Certificate",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "FBR Invoice Log",
+   "link_count": 0,
+   "link_to": "FBR Invoice Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Pakistan Sales Tax Annexure C",
+   "link_count": 0,
+   "link_to": "Pakistan Sales Tax Annexure C",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Pakistan Sales Tax Annexure A",
+   "link_count": 0,
+   "link_to": "Pakistan Sales Tax Annexure A",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Pakistan WHT Statement (Sec 165)",
+   "link_count": 0,
+   "link_to": "Pakistan WHT Statement (Sec 165)",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-09-21 13:06:27.796681",
+ "modified": "2026-09-21 18:20:00.000000",
  "modified_by": "Administrator",
  "module": "Pakistan Compliance",
  "name": "Pakistan Compliance",
