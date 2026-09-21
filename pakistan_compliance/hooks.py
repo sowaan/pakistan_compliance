@@ -86,7 +86,10 @@ app_license = "mit"
 # ------------
 
 # before_install = "pakistan_compliance.install.before_install"
-# after_install = "pakistan_compliance.install.after_install"
+after_install = "pakistan_compliance.install.after_install"
+
+# Re-assert the Pakistan tax master-data custom fields on every migrate (idempotent).
+after_migrate = "pakistan_compliance.install.after_migrate"
 
 # Uninstallation
 # ------------
