@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "creation": "2026-09-21 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "default_province",
+  "fbr_section",
+  "fbr_environment",
+  "fbr_base_url",
+  "column_break_fbr",
+  "fbr_token",
+  "internal_section",
+  "default_data_seeded"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "description": "Default province for sales tax on services when an address has none.",
+   "fieldname": "default_province",
+   "fieldtype": "Select",
+   "label": "Default Province",
+   "options": "\nPunjab\nSindh\nKhyber Pakhtunkhwa\nBalochistan\nIslamabad Capital Territory\nGilgit-Baltistan\nAzad Jammu and Kashmir"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "fbr_section",
+   "fieldtype": "Section Break",
+   "label": "FBR Digital Invoicing"
+  },
+  {
+   "default": "Sandbox",
+   "description": "Use Sandbox until FBR approves production integration.",
+   "fieldname": "fbr_environment",
+   "fieldtype": "Select",
+   "label": "FBR Environment",
+   "options": "Sandbox\nProduction"
+  },
+  {
+   "description": "FBR / PRAL Digital Invoicing API base URL.",
+   "fieldname": "fbr_base_url",
+   "fieldtype": "Data",
+   "label": "FBR Base URL"
+  },
+  {
+   "fieldname": "column_break_fbr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Integrator token issued by FBR / PRAL. Stored encrypted.",
+   "fieldname": "fbr_token",
+   "fieldtype": "Password",
+   "label": "FBR Token"
+  },
+  {
+   "fieldname": "internal_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "description": "Set once the default tax templates and accounts have been seeded.",
+   "fieldname": "default_data_seeded",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Default Data Seeded",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-09-21 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Pakistan Compliance",
+ "name": "Pakistan Tax Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

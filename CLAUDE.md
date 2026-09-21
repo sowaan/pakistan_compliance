@@ -6,7 +6,14 @@ phase, and a phase-by-phase build plan. Treat the phase list as the backlog: do 
 later phase before the current phase's acceptance criteria are met, and update the "Current Phase"
 marker below when a phase is completed.
 
-**Current Phase:** 0, Scaffolding (done). Next: Phase 1, Settings and master data.
+**Current Phase:** 1, Settings and master data (done). Next: Phase 2, Tax setup automation.
+
+Phase 1 shipped: **Pakistan Tax Settings** single DocType (enabled, default_province, FBR section
+with environment + base URL + encrypted token, hidden default_data_seeded flag for Phase 2), and the
+master-data custom fields created idempotently via `install.py` on after_install/after_migrate:
+NTN + STRN on Company/Customer/Supplier, CNIC + Filer Status (ATL) on Customer/Supplier, HS Code on
+Item, Province on Address. 4 offline tests. Verified on v16 (migrate creates the doctype + all
+fields).
 
 ## 1. What this app is
 
