@@ -184,6 +184,7 @@ DEFAULT_PRINT_FORMATS = {
 	"Purchase Order": "Pakistan Purchase Order",
 	"Quotation": "Pakistan Quotation",
 	"Payment Entry": "Pakistan Payment Voucher",
+	"Withholding Tax Certificate": "Pakistan Withholding Tax Certificate",
 }
 
 
