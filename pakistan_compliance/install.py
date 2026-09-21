@@ -174,9 +174,40 @@ def ensure_custom_fields():
 		_place_party_section(doctype)
 
 
+# DocType -> the Pakistan print format that should be its default.
+DEFAULT_PRINT_FORMATS = {
+	"Sales Invoice": "FBR Sales Tax Invoice",
+}
+
+
+def ensure_default_print_formats():
+	"""Make each Pakistan print format the default for its DocType, via a durable
+	Property Setter. Idempotent."""
+	for doctype, print_format in DEFAULT_PRINT_FORMATS.items():
+		if not (frappe.db.exists("DocType", doctype) and frappe.db.exists("Print Format", print_format)):
+			continue
+		existing = frappe.db.get_value(
+			"Property Setter",
+			{"doc_type": doctype, "property": "default_print_format", "doctype_or_field": "DocType"},
+			["name", "value"],
+			as_dict=True,
+		)
+		if existing and existing.value == print_format:
+			continue
+		if existing:
+			frappe.db.set_value("Property Setter", existing.name, "value", print_format)
+		else:
+			make_property_setter(
+				doctype, "", "default_print_format", print_format, "Data",
+				for_doctype=True, validate_fields_for_doctype=False,
+			)
+
+
 def after_install():
 	ensure_custom_fields()
+	ensure_default_print_formats()
 
 
 def after_migrate():
 	ensure_custom_fields()
+	ensure_default_print_formats()
