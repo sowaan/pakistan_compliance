@@ -8,8 +8,11 @@ create_custom_fields skips fields that already exist, so this is safe to run on
 every install and every migrate.
 """
 
+import json
+
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
 # Pakistan's tax jurisdictions (province + the two federal territories treated as
 # such for sales tax on services). Leading blank so the field is optional.
@@ -22,20 +25,26 @@ PROVINCES = (
 FILER_STATUS = "\nFiler\nNon-Filer"
 
 
-def _tax_identity_fields(insert_after):
-	"""NTN + STRN pair, shared by Company / Customer / Supplier.
+# The Pakistan Tax section fields, in display order. The field_order property
+# setter (see _place_party_section) positions this block inside the Tax tab.
+PARTY_SECTION_FIELDS = [
+	"custom_pk_tax_section",
+	"custom_ntn",
+	"custom_strn",
+	"custom_pk_tax_column_break",
+	"custom_cnic",
+	"custom_filer_status",
+]
 
-	These are plain fields (no Section/Column Break). Frappe's meta places a custom
-	Section Break just before the NEXT existing section break, which on Customer has
-	none inside the Tax tab and so pushes it into a later tab. Plain Data/Select
-	fields are placed exactly after their `insert_after`, so they stay in the Tax
-	tab's tax section."""
+
+def _company_tax_fields():
+	"""NTN + STRN on Company (no Tax tab), placed after tax_id in the details section."""
 	return [
 		{
 			"fieldname": "custom_ntn",
 			"fieldtype": "Data",
 			"label": "NTN (National Tax Number)",
-			"insert_after": insert_after,
+			"insert_after": "tax_id",
 			"translatable": 0,
 		},
 		{
@@ -48,13 +57,33 @@ def _tax_identity_fields(insert_after):
 	]
 
 
-def _party_extra_fields():
-	"""CNIC + filer status on Customer / Supplier, laid out as a second column so
-	the four Pakistan fields read as NTN/STRN | CNIC/Filer. The Column Break is
-	anchored to a custom field (custom_strn), so Frappe places it exactly there;
-	the section/column skip-ahead only triggers when the anchor is a standard
-	field already in the field order."""
+def _party_tax_fields():
+	"""The 'Pakistan Tax' section for Customer / Supplier: a Section Break plus
+	NTN/STRN in one column and CNIC/Filer Status in a second. These insert_after
+	anchors only make the fields valid; their final position inside the Tax tab is
+	set by the field_order property setter in _place_party_section (a custom Section
+	Break can't be placed reliably by insert_after alone)."""
 	return [
+		{
+			"fieldname": "custom_pk_tax_section",
+			"fieldtype": "Section Break",
+			"label": "Pakistan Tax",
+			"insert_after": "tax_withholding_category",
+		},
+		{
+			"fieldname": "custom_ntn",
+			"fieldtype": "Data",
+			"label": "NTN (National Tax Number)",
+			"insert_after": "custom_pk_tax_section",
+			"translatable": 0,
+		},
+		{
+			"fieldname": "custom_strn",
+			"fieldtype": "Data",
+			"label": "STRN (Sales Tax Registration Number)",
+			"insert_after": "custom_ntn",
+			"translatable": 0,
+		},
 		{
 			"fieldname": "custom_pk_tax_column_break",
 			"fieldtype": "Column Break",
@@ -80,13 +109,9 @@ def _party_extra_fields():
 
 
 CUSTOM_FIELDS = {
-	# Company has no Tax tab; its tax_id sits in the top "details" section, so anchor
-	# there. Customer/Supplier have a Tax tab whose last field is
-	# tax_withholding_category, so anchor to it to keep the Pakistan Tax section
-	# inside the Tax tab (anchoring to tax_id, mid-section, pushed it to a later tab).
-	"Company": _tax_identity_fields("tax_id"),
-	"Customer": _tax_identity_fields("tax_withholding_category") + _party_extra_fields(),
-	"Supplier": _tax_identity_fields("tax_withholding_category") + _party_extra_fields(),
+	"Company": _company_tax_fields(),
+	"Customer": _party_tax_fields(),
+	"Supplier": _party_tax_fields(),
 	"Item": [
 		{
 			"fieldname": "custom_hs_code",
@@ -110,8 +135,43 @@ CUSTOM_FIELDS = {
 }
 
 
+def _place_party_section(doctype):
+	"""Position the Pakistan Tax section right after `tax_withholding_category` via a
+	DocType-level `field_order` property setter, so the labeled section renders
+	inside the Tax tab. Regenerated from the live meta on every run, so it self-heals
+	if ERPNext adds or removes fields (idempotent)."""
+	if not frappe.db.exists("DocType", doctype):
+		return
+	meta = frappe.get_meta(doctype)
+	order = [df.fieldname for df in meta.fields]
+	group = [f for f in PARTY_SECTION_FIELDS if f in order]
+	if "tax_withholding_category" not in order or len(group) != len(PARTY_SECTION_FIELDS):
+		return  # fields not all present yet; nothing to place
+
+	order = [f for f in order if f not in group]
+	pos = order.index("tax_withholding_category") + 1
+	order[pos:pos] = group
+	value = json.dumps(order)
+
+	existing = frappe.db.get_value(
+		"Property Setter",
+		{"doc_type": doctype, "property": "field_order", "doctype_or_field": "DocType"},
+		"name",
+	)
+	if existing:
+		frappe.db.set_value("Property Setter", existing, "value", value)
+	else:
+		make_property_setter(
+			doctype, "", "field_order", value, "Text",
+			for_doctype=True, validate_fields_for_doctype=False,
+		)
+	frappe.clear_cache(doctype=doctype)
+
+
 def ensure_custom_fields():
 	create_custom_fields(CUSTOM_FIELDS, ignore_validate=True)
+	for doctype in ("Customer", "Supplier"):
+		_place_party_section(doctype)
 
 
 def after_install():
