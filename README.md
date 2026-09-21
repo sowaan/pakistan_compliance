@@ -1,33 +1,42 @@
-### Pakistan Compliance
+## Pakistan Compliance (`pakistan_compliance`)
 
-Pakistan localization for ERPNext: FBR sales tax invoices, tax setup, withholding tax, print formats, and FBR digital invoicing.
+Pakistan localization for Frappe / ERPNext: FBR-compliant sales tax invoices and other print
+formats, the tax setup (federal and provincial sales tax, further tax, withholding tax) with its
+Chart of Accounts, withholding-tax handling with filer / non-filer (ATL) awareness, and integration
+with FBR's Digital Invoicing system (real-time e-invoicing that returns an Invoice Reference Number
+and QR code).
+
+This is a single app. It is the Pakistan counterpart to the KSA localization work (`ksa_print_formats`
+and `zatca`).
+
+> Tax rates, thresholds, and the FBR digital-invoicing contract change frequently (annual Finance
+> Acts, SROs). This app keeps rates configurable and verifies the FBR integration against the live
+> FBR / PRAL sandbox. Always confirm current rules against the official source.
+
+### Compatibility
+
+- ERPNext / Frappe **v15**: use the `main` branch.
+- ERPNext / Frappe **v16**: use the `version-16` branch.
 
 ### Installation
 
-You can install this app using the [bench](https://github.com/frappe/bench) CLI:
-
 ```bash
 cd $PATH_TO_YOUR_BENCH
-bench get-app $URL_OF_THIS_REPO --branch version-16
-bench install-app pakistan_compliance
+
+# ERPNext / Frappe v15
+bench get-app <repo-url> --branch main
+
+# ERPNext / Frappe v16
+bench get-app <repo-url> --branch version-16
+
+bench --site $YOUR_SITE install-app pakistan_compliance
+bench --site $YOUR_SITE migrate
 ```
 
-### Contributing
+### Status
 
-This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
-
-```bash
-cd apps/pakistan_compliance
-pre-commit install
-```
-
-Pre-commit is configured to use the following tools for checking and formatting your code:
-
-- ruff
-- eslint
-- prettier
-- pyupgrade
+Early development. See `CLAUDE.md` for the phase-by-phase build plan and the current phase marker.
 
 ### License
 
-mit
+MIT
