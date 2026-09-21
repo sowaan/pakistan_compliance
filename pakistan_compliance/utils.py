@@ -59,3 +59,12 @@ def money_in_words_urdu(amount, currency=None):
 	except Exception:
 		frappe.log_error(title="Pakistan Compliance: Urdu in-words failed")
 		return ""
+
+
+def show_urdu_in_words():
+	"""Whether print formats should render the Urdu amount in words, from the
+	'Show Urdu Amount in Words' toggle on Pakistan Tax Settings. The field default
+	is on, and install.py seeds it, so a fresh (never-saved) settings doc still
+	shows Urdu. (An unset Check reads back as 0, not None, so the seeding is what
+	makes 'default on' real; turning the toggle off persists 0 and stays off.)"""
+	return bool(frappe.db.get_single_value("Pakistan Tax Settings", "show_urdu_in_words"))

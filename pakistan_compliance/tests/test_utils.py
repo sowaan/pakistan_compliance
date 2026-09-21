@@ -5,7 +5,10 @@
 
 import unittest
 
-from pakistan_compliance.utils import money_in_words_urdu
+import frappe
+
+from pakistan_compliance.install import ensure_settings_defaults
+from pakistan_compliance.utils import money_in_words_urdu, show_urdu_in_words
 
 
 class TestUrduInWords(unittest.TestCase):
@@ -46,6 +49,36 @@ class TestUrduInWords(unittest.TestCase):
 		words = money_in_words_urdu(9.999, "PKR")
 		self.assertNotIn("پیسے", words)
 		self.assertEqual(words, money_in_words_urdu(10, "PKR"))
+
+
+class TestUrduInWordsToggle(unittest.TestCase):
+	"""The 'Show Urdu Amount in Words' toggle on Pakistan Tax Settings."""
+
+	def setUp(self):
+		self._saved = frappe.db.get_single_value("Pakistan Tax Settings", "show_urdu_in_words")
+
+	def tearDown(self):
+		frappe.db.set_single_value(
+			"Pakistan Tax Settings", "show_urdu_in_words", self._saved or 0
+		)
+
+	def test_toggle_on_and_off(self):
+		frappe.db.set_single_value("Pakistan Tax Settings", "show_urdu_in_words", 1)
+		self.assertTrue(show_urdu_in_words())
+		frappe.db.set_single_value("Pakistan Tax Settings", "show_urdu_in_words", 0)
+		self.assertFalse(show_urdu_in_words())
+
+	def test_seed_defaults_on_when_unset(self):
+		frappe.db.delete(
+			"Singles", {"doctype": "Pakistan Tax Settings", "field": "show_urdu_in_words"}
+		)
+		ensure_settings_defaults()
+		self.assertTrue(show_urdu_in_words())
+
+	def test_seed_does_not_override_customer_off(self):
+		frappe.db.set_single_value("Pakistan Tax Settings", "show_urdu_in_words", 0)
+		ensure_settings_defaults()  # must respect the explicit off
+		self.assertFalse(show_urdu_in_words())
 
 
 if __name__ == "__main__":
