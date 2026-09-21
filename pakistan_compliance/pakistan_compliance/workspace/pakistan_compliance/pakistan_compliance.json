@@ -1,8 +1,8 @@
 {
  "app": "pakistan_compliance",
  "charts": [],
- "content": "[{\"id\": \"pk_head\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Pakistan Compliance</b></span>\", \"col\": 12}}, {\"id\": \"pk_sc\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pakistan Tax Settings\", \"col\": 3}}, {\"id\": \"pk_card\", \"type\": \"card\", \"data\": {\"card_name\": \"Setup\", \"col\": 4}}]",
- "creation": "2026-09-21 10:28:36.218970",
+ "content": "[{\"id\": \"pk_head\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Pakistan Compliance</b></span>\", \"col\": 12}}, {\"id\": \"pk_sc1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pakistan Tax Settings\", \"col\": 3}}, {\"id\": \"pk_sc2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Taxes and Charges Template\", \"col\": 3}}, {\"id\": \"pk_card_setup\", \"type\": \"card\", \"data\": {\"card_name\": \"Setup\", \"col\": 4}}, {\"id\": \"pk_card_taxes\", \"type\": \"card\", \"data\": {\"card_name\": \"Taxes\", \"col\": 4}}]",
+ "creation": "2026-09-21 13:06:27.796681",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -32,9 +32,58 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Taxes",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sales Taxes and Charges Template",
+   "link_count": 0,
+   "link_to": "Sales Taxes and Charges Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Purchase Taxes and Charges Template",
+   "link_count": 0,
+   "link_to": "Purchase Taxes and Charges Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Item Tax Template",
+   "link_count": 0,
+   "link_to": "Item Tax Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Chart of Accounts",
+   "link_count": 0,
+   "link_to": "Account",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-09-21 10:28:36.218970",
+ "modified": "2026-09-21 13:06:27.796681",
  "modified_by": "Administrator",
  "module": "Pakistan Compliance",
  "name": "Pakistan Compliance",
@@ -50,6 +99,13 @@
    "doc_view": "",
    "label": "Pakistan Tax Settings",
    "link_to": "Pakistan Tax Settings",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "label": "Sales Taxes and Charges Template",
+   "link_to": "Sales Taxes and Charges Template",
    "type": "DocType"
   }
  ],
