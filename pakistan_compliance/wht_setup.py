@@ -40,6 +40,16 @@ WHT_PAYABLE = "Withholding Tax Payable"
 WHT_RATES_FROM = "2025-07-01"
 WHT_RATES_TO = "2099-12-31"
 
+# ERPNext v15's WHT engine only starts withholding once a transaction reaches the
+# single_threshold: its gate is `(single_threshold and net >= single_threshold)`, so
+# a threshold of 0 short-circuits to "never withhold" (v15 was built around India's
+# TDS, which always has a positive threshold). Most Pakistani sections (e.g. 153 for
+# companies) have NO minimum, so we seed a nominal 1 to make v15 withhold on every
+# transaction, on the FULL amount (tax_on_excess_amount is left off). Harmless on v16.
+# Where a section has a real statutory exemption (e.g. 155 rent for individuals),
+# raise this on that category. Keep it configurable; do not treat 1 as law.
+WHT_SINGLE_THRESHOLD = 1.0
+
 # Pakistan withholding income-tax sections most relevant to supplier payments.
 # Rates are % from the official FBR Withholding Income Tax Rate Card for tax year
 # 2026 (updated to 30 June 2025 per the Finance Act 2025), cross-checked against
@@ -98,7 +108,12 @@ def _ensure_wht_category(title, rate, company, account):
 			"category_name": title,
 			"round_off_tax_amount": 1,
 			"rates": [
-				{"from_date": WHT_RATES_FROM, "to_date": WHT_RATES_TO, "tax_withholding_rate": rate}
+				{
+					"from_date": WHT_RATES_FROM,
+					"to_date": WHT_RATES_TO,
+					"tax_withholding_rate": rate,
+					"single_threshold": WHT_SINGLE_THRESHOLD,
+				}
 			],
 			"accounts": [{"company": company, "account": account}],
 		}
