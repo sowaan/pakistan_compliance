@@ -61,6 +61,15 @@ def money_in_words_urdu(amount, currency=None):
 		return ""
 
 
+def fmt_money_abs(value, currency=None):
+	"""Format the magnitude of a money value in the given currency. Returns (returns
+	/ credit / debit notes) store negative amounts; on those documents we show the
+	positive figure and let the 'Credit Note' / 'Debit Note' title convey direction."""
+	from frappe.utils import fmt_money
+
+	return fmt_money(abs(flt(value)), currency=currency)
+
+
 def show_urdu_in_words():
 	"""Whether print formats should render the Urdu amount in words, from the
 	'Show Urdu Amount in Words' toggle on Pakistan Tax Settings. The field default
