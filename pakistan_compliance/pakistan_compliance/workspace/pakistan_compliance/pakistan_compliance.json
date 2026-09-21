@@ -1,0 +1,58 @@
+{
+ "app": "pakistan_compliance",
+ "charts": [],
+ "content": "[{\"id\": \"pk_head\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Pakistan Compliance</b></span>\", \"col\": 12}}, {\"id\": \"pk_sc\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pakistan Tax Settings\", \"col\": 3}}, {\"id\": \"pk_card\", \"type\": \"card\", \"data\": {\"card_name\": \"Setup\", \"col\": 4}}]",
+ "creation": "2026-09-21 10:28:36.218970",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "setting",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Pakistan Compliance",
+ "link_type": "DocType",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Setup",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pakistan Tax Settings",
+   "link_count": 0,
+   "link_to": "Pakistan Tax Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-09-21 10:28:36.218970",
+ "modified_by": "Administrator",
+ "module": "Pakistan Compliance",
+ "name": "Pakistan Compliance",
+ "number_cards": [],
+ "owner": "Administrator",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 0.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "label": "Pakistan Tax Settings",
+   "link_to": "Pakistan Tax Settings",
+   "type": "DocType"
+  }
+ ],
+ "title": "Pakistan Compliance",
+ "type": "Workspace"
+}
