@@ -132,6 +132,26 @@ CUSTOM_FIELDS = {
 			"description": "Determines the sales-tax-on-services authority (SRB / PRA / KPRA / BRA / ICT).",
 		}
 	],
+	"Sales Invoice": [
+		{
+			"fieldname": "custom_fbr_invoice_number",
+			"fieldtype": "Data",
+			"label": "FBR Invoice Number (IRN)",
+			"insert_after": "customer_name",
+			"read_only": 1,
+			"no_copy": 1,
+			"translatable": 0,
+			"description": "Invoice Reference Number returned by FBR Digital Invoicing.",
+		},
+		{
+			"fieldname": "custom_fbr_reported",
+			"fieldtype": "Check",
+			"label": "Reported to FBR",
+			"insert_after": "custom_fbr_invoice_number",
+			"read_only": 1,
+			"no_copy": 1,
+		},
+	],
 }
 
 
