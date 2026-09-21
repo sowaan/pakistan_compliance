@@ -10,6 +10,7 @@ dynamic = ["version"]
 dependencies = [
     # "frappe~=16.0.0" # Installed and managed by bench.
     "indic-numtowords>=1.1.0",  # Urdu amount-in-words (num2words has no Urdu backend)
+    "qrcode",  # render the FBR invoice QR locally (Pillow ships with Frappe)
 ]
 
 [build-system]

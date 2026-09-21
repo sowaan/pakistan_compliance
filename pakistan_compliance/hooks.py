@@ -4,22 +4,24 @@ app_publisher = "Sowaan"
 app_description = "Pakistan localization for ERPNext: FBR sales tax invoices, tax setup, withholding tax, print formats, and FBR digital invoicing."
 app_email = "support@sowaan.com"
 app_license = "mit"
+# Small (128x128) icon for the navbar / app switcher; the full 500x500 is used for
+# the marketplace listing.
+app_logo_url = "/assets/pakistan_compliance/images/pk_compliance_sm.png"
 
 # Apps
 # ------------------
 
 # required_apps = []
 
-# Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "pakistan_compliance",
-# 		"logo": "/assets/pakistan_compliance/logo.png",
-# 		"title": "Pakistan Compliance",
-# 		"route": "/pakistan_compliance",
-# 		"has_permission": "pakistan_compliance.api.permission.has_app_permission"
-# 	}
-# ]
+# Shown as an app tile (with the pk_compliance icon) on the v15+ /apps launcher.
+add_to_apps_screen = [
+	{
+		"name": "pakistan_compliance",
+		"logo": "/assets/pakistan_compliance/images/pk_compliance_sm.png",
+		"title": "Pakistan Compliance",
+		"route": "/app/pakistan-compliance",
+	}
+]
 
 # Includes in <head>
 # ------------------
@@ -83,6 +85,7 @@ jinja = {
 		"pakistan_compliance.utils.money_in_words_urdu",
 		"pakistan_compliance.utils.show_urdu_in_words",
 		"pakistan_compliance.utils.fmt_money_abs",
+		"pakistan_compliance.utils.qr_png_data_uri",
 	],
 }
 
