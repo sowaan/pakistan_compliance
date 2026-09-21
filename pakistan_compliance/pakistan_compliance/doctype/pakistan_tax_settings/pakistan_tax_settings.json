@@ -11,6 +11,7 @@
   "fbr_section",
   "fbr_environment",
   "fbr_base_url",
+  "fbr_scenario_id",
   "column_break_fbr",
   "fbr_token",
   "internal_section",
@@ -57,10 +58,17 @@
    "options": "Sandbox\nProduction"
   },
   {
-   "description": "FBR / PRAL Digital Invoicing API base URL.",
+   "description": "FBR / PRAL Digital Invoicing API base URL. Defaults to https://gw.fbr.gov.pk.",
    "fieldname": "fbr_base_url",
    "fieldtype": "Data",
    "label": "FBR Base URL"
+  },
+  {
+   "depends_on": "eval:doc.fbr_environment=='Sandbox'",
+   "description": "FBR sandbox test scenario, e.g. SN001. Sent only in the Sandbox environment.",
+   "fieldname": "fbr_scenario_id",
+   "fieldtype": "Data",
+   "label": "Sandbox Scenario ID"
   },
   {
    "fieldname": "column_break_fbr",
@@ -89,7 +97,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-09-21 12:30:00.000000",
+ "modified": "2026-09-21 17:30:00.000000",
  "modified_by": "Administrator",
  "module": "Pakistan Compliance",
  "name": "Pakistan Tax Settings",

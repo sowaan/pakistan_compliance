@@ -152,6 +152,9 @@ after_migrate = "pakistan_compliance.install.after_migrate"
 
 # Document Events
 # ---------------
+# Client scripts on standard doctypes
+doctype_js = {"Sales Invoice": "public/js/sales_invoice_fbr.js"}
+
 # Hook on document methods and events
 
 # Propagate supplier-level withholding-tax config to item rows so it computes on
