@@ -49,13 +49,22 @@ def _tax_identity_fields(insert_after):
 
 
 def _party_extra_fields():
-	"""CNIC + filer status, added after the NTN/STRN pair on Customer / Supplier."""
+	"""CNIC + filer status on Customer / Supplier, laid out as a second column so
+	the four Pakistan fields read as NTN/STRN | CNIC/Filer. The Column Break is
+	anchored to a custom field (custom_strn), so Frappe places it exactly there;
+	the section/column skip-ahead only triggers when the anchor is a standard
+	field already in the field order."""
 	return [
+		{
+			"fieldname": "custom_pk_tax_column_break",
+			"fieldtype": "Column Break",
+			"insert_after": "custom_strn",
+		},
 		{
 			"fieldname": "custom_cnic",
 			"fieldtype": "Data",
 			"label": "CNIC",
-			"insert_after": "custom_strn",
+			"insert_after": "custom_pk_tax_column_break",
 			"translatable": 0,
 			"description": "13-digit national ID, required on invoices to unregistered buyers above the FBR threshold.",
 		},
