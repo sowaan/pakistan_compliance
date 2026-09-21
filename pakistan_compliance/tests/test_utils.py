@@ -8,7 +8,7 @@ import unittest
 import frappe
 
 from pakistan_compliance.install import ensure_settings_defaults
-from pakistan_compliance.utils import money_in_words_urdu, show_urdu_in_words
+from pakistan_compliance.utils import fmt_money_abs, money_in_words_urdu, show_urdu_in_words
 
 
 class TestUrduInWords(unittest.TestCase):
@@ -49,6 +49,16 @@ class TestUrduInWords(unittest.TestCase):
 		words = money_in_words_urdu(9.999, "PKR")
 		self.assertNotIn("پیسے", words)
 		self.assertEqual(words, money_in_words_urdu(10, "PKR"))
+
+
+class TestFmtMoneyAbs(unittest.TestCase):
+	"""Magnitude formatting for returns / credit / debit notes (negative amounts)."""
+
+	def test_negative_shows_positive_magnitude(self):
+		self.assertEqual(fmt_money_abs(-11800, "PKR"), fmt_money_abs(11800, "PKR"))
+
+	def test_no_minus_sign(self):
+		self.assertNotIn("-", fmt_money_abs(-10000, "PKR"))
 
 
 class TestUrduInWordsToggle(unittest.TestCase):
