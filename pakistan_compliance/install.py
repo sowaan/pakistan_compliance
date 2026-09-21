@@ -23,20 +23,19 @@ FILER_STATUS = "\nFiler\nNon-Filer"
 
 
 def _tax_identity_fields(insert_after):
-	"""NTN + STRN pair, shared by Company / Customer / Supplier."""
+	"""NTN + STRN pair, shared by Company / Customer / Supplier.
+
+	These are plain fields (no Section/Column Break). Frappe's meta places a custom
+	Section Break just before the NEXT existing section break, which on Customer has
+	none inside the Tax tab and so pushes it into a later tab. Plain Data/Select
+	fields are placed exactly after their `insert_after`, so they stay in the Tax
+	tab's tax section."""
 	return [
-		{
-			"fieldname": "custom_pk_tax_section",
-			"fieldtype": "Section Break",
-			"label": "Pakistan Tax",
-			"insert_after": insert_after,
-			"collapsible": 1,
-		},
 		{
 			"fieldname": "custom_ntn",
 			"fieldtype": "Data",
 			"label": "NTN (National Tax Number)",
-			"insert_after": "custom_pk_tax_section",
+			"insert_after": insert_after,
 			"translatable": 0,
 		},
 		{
@@ -61,25 +60,24 @@ def _party_extra_fields():
 			"description": "13-digit national ID, required on invoices to unregistered buyers above the FBR threshold.",
 		},
 		{
-			"fieldname": "custom_column_break_pk_tax",
-			"fieldtype": "Column Break",
-			"insert_after": "custom_cnic",
-		},
-		{
 			"fieldname": "custom_filer_status",
 			"fieldtype": "Select",
 			"label": "Filer Status (ATL)",
 			"options": FILER_STATUS,
-			"insert_after": "custom_column_break_pk_tax",
+			"insert_after": "custom_cnic",
 			"description": "Active Taxpayer List status. Affects withholding-tax rates.",
 		},
 	]
 
 
 CUSTOM_FIELDS = {
+	# Company has no Tax tab; its tax_id sits in the top "details" section, so anchor
+	# there. Customer/Supplier have a Tax tab whose last field is
+	# tax_withholding_category, so anchor to it to keep the Pakistan Tax section
+	# inside the Tax tab (anchoring to tax_id, mid-section, pushed it to a later tab).
 	"Company": _tax_identity_fields("tax_id"),
-	"Customer": _tax_identity_fields("tax_id") + _party_extra_fields(),
-	"Supplier": _tax_identity_fields("tax_id") + _party_extra_fields(),
+	"Customer": _tax_identity_fields("tax_withholding_category") + _party_extra_fields(),
+	"Supplier": _tax_identity_fields("tax_withholding_category") + _party_extra_fields(),
 	"Item": [
 		{
 			"fieldname": "custom_hs_code",
