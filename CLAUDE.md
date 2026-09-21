@@ -6,7 +6,18 @@ phase, and a phase-by-phase build plan. Treat the phase list as the backlog: do 
 later phase before the current phase's acceptance criteria are met, and update the "Current Phase"
 marker below when a phase is completed.
 
-**Current Phase:** 1, Settings and master data (done). Next: Phase 2, Tax setup automation.
+**Current Phase:** 2, Tax setup automation (done). Next: Phase 3, Print formats.
+
+Phase 2 shipped: a **"Set up Pakistan Taxes"** button on Pakistan Tax Settings (prompts for a
+Company) that runs `tax_setup.setup_company_taxes` to idempotently create, under the company's
+Duties and Taxes group: output/input tax accounts (Sales Tax Payable, Further Tax Payable, Input
+Sales Tax, and per-province payables) and the Sales/Purchase Taxes and Charges Templates (federal
+18%, 18% + further 3%, provincial services SRB 13% / PRA 16% / KPRA 15% / BRA 15% / ICT 15%, zero
+rated, exempt, plus input equivalents). Rates are the confirmed current defaults; re-running skips
+what exists. Workspace grew a Taxes card (tax templates, item tax template, chart of accounts). The
+customer-facing field placement fix from Phase 1 also landed here (Pakistan Tax section in the Tax
+tab, 2 columns, via a field_order property setter). 9 offline tests. Verified end-to-end on a real
+Company (accounts + all templates created).
 
 Phase 1 shipped: **Pakistan Tax Settings** single DocType (enabled, default_province, FBR section
 with environment + base URL + encrypted token, hidden default_data_seeded flag for Phase 2), and the
