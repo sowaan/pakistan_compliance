@@ -6,7 +6,18 @@ phase, and a phase-by-phase build plan. Treat the phase list as the backlog: do 
 later phase before the current phase's acceptance criteria are met, and update the "Current Phase"
 marker below when a phase is completed.
 
-**Current Phase:** 2, Tax setup automation (done). Next: Phase 3, Print formats.
+**Current Phase:** 3, Print formats (in progress). First format done: **FBR Sales Tax
+Invoice**. Next in Phase 3: Credit/Debit Note, Delivery Challan, Purchase Order, Quotation,
+Payment Voucher, Withholding Tax Certificate, and Urdu amount-in-words.
+
+Phase 3 so far: a standard **"FBR Sales Tax Invoice"** print format (Jinja, shipped as an app
+file under `print_format/fbr_sales_tax_invoice/`) for Sales Invoice: seller and buyer NTN/STRN
+(CNIC fallback for unregistered buyers), per-line HS Code (from Item `custom_hs_code`), value
+excluding tax, the full tax breakdown from `doc.taxes` (Sales Tax 18%, Further Tax 3%, provincial,
+etc.), grand total, and amount in words. `install.py` now also sets it as the default print format
+for Sales Invoice via a durable Property Setter (`ensure_default_print_formats`, idempotent).
+Render-verified with sample data. Urdu amount-in-words is deferred (num2words has no Urdu; needs a
+small custom converter), English `in_words` used for now.
 
 Phase 2 shipped: a **"Set up Pakistan Taxes"** button on Pakistan Tax Settings (prompts for a
 Company) that runs `tax_setup.setup_company_taxes` to idempotently create, under the company's
