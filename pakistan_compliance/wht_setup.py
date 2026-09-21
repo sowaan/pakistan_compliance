@@ -1,0 +1,110 @@
+# Copyright (c) 2026, Sowaan and contributors
+# For license information, please see license.txt
+
+"""Phase 4: Pakistan withholding-tax (WHT) setup automation.
+
+Creates ERPNext's native **Tax Withholding Category** records for the Pakistani
+income-tax sections most relevant to supplier payments, in Filer and Non-Filer
+variants (filer = on the FBR Active Taxpayer List, non-filer = not). This reuses
+ERPNext's built-in WHT engine (Purchase Invoice `apply_tds`, the supplier's
+`tax_withholding_category`, dated rate rows and thresholds) rather than building a
+parallel deduction engine, the same "extend the platform" approach used elsewhere
+in this app.
+
+Company-scoped like the Phase 2 tax setup: it creates a WHT payable account under
+the company's Duties and Taxes group and adds it to each category's accounts table.
+Idempotent: existing accounts / categories are skipped.
+
+RATE POLICY (guardrails #1 and #4): the rates below are DEFAULTS that MUST be
+verified against the current Finance Act / SROs (Income Tax Ordinance 2001, First
+and Tenth Schedules) before production use. They are not baked in as truth: they
+live in this editable table and in the created Tax Withholding Categories, both of
+which a user can change without touching code. Non-filer rates are listed
+explicitly per section (they are NOT uniformly double the filer rate). When a rate
+is uncertain, confirm it; do not treat these defaults as authoritative.
+"""
+
+import frappe
+from frappe import _
+
+from pakistan_compliance.tax_setup import _acc, _ensure_account, _tax_parent
+
+# WHT deducted by the buyer is a liability owed to FBR until deposited.
+WHT_PAYABLE = "Withholding Tax Payable"
+
+# Validity window for the seeded rate rows. WHT rates are set by the annual Finance
+# Act; Pakistan's tax year runs 1 July to 30 June. from_date is the current tax
+# year's start; to_date is left far in the future (not the tax-year end) so a later
+# invoice never silently computes zero WHT. Review each rate when a new Finance Act
+# or SRO changes it (edit the category's rate row, or add a new dated row).
+WHT_RATES_FROM = "2025-07-01"
+WHT_RATES_TO = "2099-12-31"
+
+# Pakistan withholding income-tax sections most relevant to supplier payments.
+# rates are % and MUST be verified against the current Finance Act / SROs.
+WHT_SECTIONS = [
+	{"section": "153(1)(a)", "label": "Sale of Goods", "filer": 5.0, "non_filer": 10.0},
+	{"section": "153(1)(b)", "label": "Services", "filer": 10.0, "non_filer": 20.0},
+	{"section": "153(1)(c)", "label": "Execution of Contracts", "filer": 7.0, "non_filer": 14.0},
+	{"section": "233", "label": "Brokerage & Commission", "filer": 10.0, "non_filer": 20.0},
+	{"section": "155", "label": "Rent of Immovable Property", "filer": 5.0, "non_filer": 10.0},
+]
+
+STATUSES = ("Filer", "Non-Filer")
+
+
+def category_name(section, label, status):
+	"""Stable, readable Tax Withholding Category name for a section + filer status."""
+	return f"Pakistan WHT {section} {label} ({status})"
+
+
+def _ensure_wht_category(title, rate, company, account):
+	"""Create a Tax Withholding Category (native ERPNext) with one rate row and the
+	company's WHT account, if a category by this name does not already exist.
+	Returns True if created. Only common v15/v16 fields are set."""
+	if frappe.db.exists("Tax Withholding Category", title):
+		# Make sure the company's account row is present (a category may be shared
+		# across companies), without touching the rate a customer may have edited.
+		doc = frappe.get_doc("Tax Withholding Category", title)
+		if not any(a.company == company for a in doc.accounts):
+			doc.append("accounts", {"company": company, "account": account})
+			doc.save(ignore_permissions=True)
+		return False
+
+	doc = frappe.get_doc(
+		{
+			"doctype": "Tax Withholding Category",
+			"name": title,
+			"category_name": title,
+			"round_off_tax_amount": 1,
+			"rates": [
+				{"from_date": WHT_RATES_FROM, "to_date": WHT_RATES_TO, "tax_withholding_rate": rate}
+			],
+			"accounts": [{"company": company, "account": account}],
+		}
+	)
+	doc.insert(ignore_permissions=True)
+	return True
+
+
+@frappe.whitelist()
+def setup_company_wht(company):
+	"""Create the Pakistan WHT payable account and the Tax Withholding Categories
+	(Filer + Non-Filer per section) for `company`. Idempotent. Returns a summary."""
+	frappe.only_for("System Manager")
+	if not (company and frappe.db.exists("Company", company)):
+		frappe.throw(_("Select a valid Company to set up withholding tax for."))
+
+	parent = _tax_parent(company)
+	account, _created = _ensure_account(company, WHT_PAYABLE, parent)
+
+	created = {"account": WHT_PAYABLE if _created else None, "categories": []}
+	for sec in WHT_SECTIONS:
+		for status in STATUSES:
+			rate = sec["filer"] if status == "Filer" else sec["non_filer"]
+			title = category_name(sec["section"], sec["label"], status)
+			if _ensure_wht_category(title, rate, company, account):
+				created["categories"].append(title)
+
+	frappe.db.commit()
+	return created

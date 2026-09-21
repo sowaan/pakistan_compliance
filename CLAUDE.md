@@ -15,7 +15,26 @@ after_install overrides the ERPNext framework default e.g. 'Sales Order with Ite
 migrate it is force=False so a customer's own default is never overridden. The Credit Note shares
 the Sales Invoice DocType with the invoice (which owns that default), so it stays manually
 selectable. The **Withholding Tax Certificate** is the only Phase 3 item left and waits for Phase
-4's WHT logic. Next: Phase 4, withholding tax and ATL.
+4's WHT logic.
+
+**Phase 4 (withholding tax + ATL) started.** Approach: reuse ERPNext's native **Tax Withholding
+Category** rather than build a parallel engine. `wht_setup.py` has a whitelisted
+`setup_company_wht(company)` (button on Pakistan Tax Settings) that creates a WHT payable account
+under the company's Duties and Taxes group and one Tax Withholding Category per income-tax section
+in Filer and Non-Filer variants (153(1)(a) goods, 153(1)(b) services, 153(1)(c) contracts, 233
+commission, 155 rent). Idempotent; verified live on a real Company (account + 10 categories). Only
+common v15/v16 fields are set on the category (category_name, rates, accounts, round_off_tax_amount).
+
+**TWO OPEN ITEMS before Phase 4 can be called done:**
+1. **Rates need confirmation (guardrail #1/#4).** The seeded filer/non-filer percentages in
+   `WHT_SECTIONS` are placeholders that MUST be verified against the current Finance Act / SROs
+   before production. Do not treat them as authoritative.
+2. **v15 vs v16 WHT engine divergence.** v15 adds a "Deduct" tax row in `validate` (our seeded
+   categories work directly). v16 reworked WHT: rate rows are keyed by a new `tax_withholding_group`
+   Link, categories can be item-level, and deduction flows through a new `Tax Withholding Entry`
+   doctype on submit (not a draft tax line). Our seeded categories exist on v16 but the compute path
+   differs; full v16 support (groups + entry flow) and the WHT Certificate print format are the
+   remaining Phase 4 build. Decide scope/priority before continuing.
 
 Print-format build notes (for the next agent): each format is a standard Jinja Print Format shipped
 as an app file under `print_format/<scrubbed>/`. The print Jinja sandbox exposes only a subset of
