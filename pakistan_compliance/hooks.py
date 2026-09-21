@@ -151,13 +151,16 @@ after_migrate = "pakistan_compliance.install.after_migrate"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+# Propagate supplier-level withholding-tax config to item rows so it computes on
+# ERPNext v16 (item-driven WHT). No-op on v15. See wht_setup.propagate_item_wht.
+doc_events = {
+	"Purchase Invoice": {
+		"validate": "pakistan_compliance.wht_setup.propagate_item_wht",
+	},
+	"Purchase Order": {
+		"validate": "pakistan_compliance.wht_setup.propagate_item_wht",
+	},
+}
 
 # Scheduled Tasks
 # ---------------

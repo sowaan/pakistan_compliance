@@ -108,3 +108,36 @@ def setup_company_wht(company):
 
 	frappe.db.commit()
 	return created
+
+
+def propagate_item_wht(doc, method=None):
+	"""Make supplier-level WHT configuration work on ERPNext v16.
+
+	v15 applies WHT from the document's `tax_withholding_category` (taken from the
+	supplier) as a tax line at validation. v16 instead computes WHT from each item
+	row's `tax_withholding_category` + `apply_tds`. So on v16 a category set only on
+	the supplier would never deduct. This validate hook copies the document's WHT
+	category (or, if unset, the supplier's) down to item rows that lack one, and turns
+	on their `apply_tds`, so configuring WHT once on the supplier behaves the same on
+	both versions. No-op on v15, where the item rows have no such fields."""
+	if not doc.get("items"):
+		return
+	# v15 guard: if the item row has no WHT field, there is nothing to propagate.
+	if not doc.get("items")[0].meta.has_field("tax_withholding_category"):
+		return
+	if not doc.get("apply_tds"):
+		return
+
+	category = doc.get("tax_withholding_category")
+	if not category and doc.get("supplier"):
+		category = frappe.db.get_value("Supplier", doc.supplier, "tax_withholding_category")
+		if category:
+			doc.tax_withholding_category = category
+	if not category:
+		return
+
+	for item in doc.items:
+		if not item.get("tax_withholding_category"):
+			item.tax_withholding_category = category
+		if item.meta.has_field("apply_tds") and not item.get("apply_tds"):
+			item.apply_tds = 1
