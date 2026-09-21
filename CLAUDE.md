@@ -6,9 +6,9 @@ phase, and a phase-by-phase build plan. Treat the phase list as the backlog: do 
 later phase before the current phase's acceptance criteria are met, and update the "Current Phase"
 marker below when a phase is completed.
 
-**Current Phase:** 3, Print formats (in progress). First format done: **FBR Sales Tax
-Invoice**. Next in Phase 3: Credit/Debit Note, Delivery Challan, Purchase Order, Quotation,
-Payment Voucher, Withholding Tax Certificate, and Urdu amount-in-words.
+**Current Phase:** 3, Print formats (in progress). Done: **FBR Sales Tax Invoice** and the **Urdu
+amount-in-words** helper. Next in Phase 3: Credit/Debit Note, Delivery Challan, Purchase Order,
+Quotation, Payment Voucher; the Withholding Tax Certificate waits for Phase 4's WHT logic.
 
 Phase 3 so far: a standard **"FBR Sales Tax Invoice"** print format (Jinja, shipped as an app
 file under `print_format/fbr_sales_tax_invoice/`) for Sales Invoice: seller and buyer NTN/STRN
@@ -16,8 +16,14 @@ file under `print_format/fbr_sales_tax_invoice/`) for Sales Invoice: seller and 
 excluding tax, the full tax breakdown from `doc.taxes` (Sales Tax 18%, Further Tax 3%, provincial,
 etc.), grand total, and amount in words. `install.py` now also sets it as the default print format
 for Sales Invoice via a durable Property Setter (`ensure_default_print_formats`, idempotent).
-Render-verified with sample data. Urdu amount-in-words is deferred (num2words has no Urdu; needs a
-small custom converter), English `in_words` used for now.
+Render-verified with sample data.
+
+**Urdu amount-in-words** now done (was deferred): `num2words` has no Urdu backend, so we use
+`indic-numtowords` (MIT, no deps) via `utils.money_in_words_urdu(amount, currency)`, exposed to
+Jinja through the `jinja` hook so print formats call it at render time (no stored field). Handles
+paisa sub-units, negative totals (credit/debit notes), rounding carry, and per-currency unit names
+(PKR roupe/paisa, plus USD/EUR/GBP/SAR/AED/INR; unknown codes used verbatim, never mislabeled). The
+FBR Sales Tax Invoice renders it RTL under the English line. 8 offline tests (test_utils.py).
 
 Phase 2 shipped: a **"Set up Pakistan Taxes"** button on Pakistan Tax Settings (prompts for a
 Company) that runs `tax_setup.setup_company_taxes` to idempotently create, under the company's
@@ -87,7 +93,7 @@ per-branch difference is `[tool.bench.frappe-dependencies]` in `pyproject.toml`.
 | Data model | Frappe DocTypes | Settings, FBR logs, WHT config, etc. Standard patterns. |
 | HTTP client | plain `requests` | FBR/PRAL REST API. A thin wrapper module (`fbr_client.py`), no heavy SDK. |
 | Templating | Frappe Jinja (`frappe.render_template`) | Same engine Print Formats use. No second engine. |
-| Amount in words | `num2words` (Urdu) | Same approach used for Arabic in the KSA app. Add to dependencies. |
+| Amount in words | `indic-numtowords` (Urdu) | `num2words` has no Urdu/Hindi backend (verified 0.5.14, both raise NotImplementedError). `indic-numtowords` (MIT, no deps, py>=3.6) spells Urdu with correct South Asian lakh/crore grouping. Exposed to Jinja via `money_in_words_urdu` (see `utils.py` + the `jinja` hook). |
 | Frontend | Frappe Desk (client scripts, standard views) | Native feel, no separate SPA. |
 | Distribution | Standard installable Frappe app | Marketplace later (Phase 7). |
 
