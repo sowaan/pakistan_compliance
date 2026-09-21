@@ -25,16 +25,32 @@ in Filer and Non-Filer variants (153(1)(a) goods, 153(1)(b) services, 153(1)(c) 
 commission, 155 rent). Idempotent; verified live on a real Company (account + 10 categories). Only
 common v15/v16 fields are set on the category (category_name, rates, accounts, round_off_tax_amount).
 
-**TWO OPEN ITEMS before Phase 4 can be called done:**
-1. **Rates need confirmation (guardrail #1/#4).** The seeded filer/non-filer percentages in
-   `WHT_SECTIONS` are placeholders that MUST be verified against the current Finance Act / SROs
-   before production. Do not treat them as authoritative.
-2. **v15 vs v16 WHT engine divergence.** v15 adds a "Deduct" tax row in `validate` (our seeded
-   categories work directly). v16 reworked WHT: rate rows are keyed by a new `tax_withholding_group`
-   Link, categories can be item-level, and deduction flows through a new `Tax Withholding Entry`
-   doctype on submit (not a draft tax line). Our seeded categories exist on v16 but the compute path
-   differs; full v16 support (groups + entry flow) and the WHT Certificate print format are the
-   remaining Phase 4 build. Decide scope/priority before continuing.
+**Phase 4 is code-complete; live sign-off on rates still pending.**
+
+Rates: `WHT_SECTIONS` now carries the FBR **tax year 2026** (Finance Act 2025) rates from the
+official FBR Withholding Income Tax Rate Card, cross-checked against KPMG/TAG/PwC/Grant Thornton
+(153(1)(a) goods 5/10, 153(1)(b) services 15/30 general, 153(1)(c) contracts 7.5/15, 233 commission
+12/24, 155 rent 15/30 company). Company rate used where a company/non-company split exists; reduced
+service carve-outs (6/12, 4/8, 1.5/3) and the individual/AOP slab for 155 are documented in
+`wht_setup.py` comments. Re-verify each Finance Act; a user still confirms before production.
+
+v16 support: DONE. v15 applies WHT as a "Deduct" tax row at validation; v16 reworked it to be
+item-driven (`item.tax_withholding_category` + `item.apply_tds` -> a `Tax Withholding Entry` on
+submit). `wht_setup.propagate_item_wht` (validate hook on Purchase Invoice/Order) copies the
+supplier's WHT category down to item rows so supplier-level config deducts on both versions. Verified
+live on v16: Filer PI deducts 10%, Non-Filer 20%, each posting a Tax Withholding Entry + GL credit to
+Withholding Tax Payable.
+
+WHT Certificate: DONE. A submittable **Withholding Tax Certificate** DocType (company, supplier,
+period, deductions, totals) with a "Fetch Deductions" button that reads GL entries against the
+company's WHT accounts (cross-version; the WHT GL line has no party, so each voucher is matched to
+its own supplier), plus a green **Pakistan Withholding Tax Certificate** print format (English + Urdu
+total-in-words, Income Tax Ordinance 2001 certification). Set as the doctype default.
+
+Remaining before "done": the live acceptance ("a payment/purchase correctly computes and posts WHT
+for a filer and a non-filer") is proven on v16 in a console session; a real submitted-and-committed
+document on the site plus final rate sign-off close the phase. Suppliers are assigned the matching
+(Filer)/(Non-Filer) category manually; an auto-assign-by-filer-status helper is a possible follow-up.
 
 Print-format build notes (for the next agent): each format is a standard Jinja Print Format shipped
 as an app file under `print_format/<scrubbed>/`. The print Jinja sandbox exposes only a subset of

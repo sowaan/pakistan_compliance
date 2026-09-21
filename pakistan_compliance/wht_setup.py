@@ -41,13 +41,33 @@ WHT_RATES_FROM = "2025-07-01"
 WHT_RATES_TO = "2099-12-31"
 
 # Pakistan withholding income-tax sections most relevant to supplier payments.
-# rates are % and MUST be verified against the current Finance Act / SROs.
+# Rates are % from the official FBR Withholding Income Tax Rate Card for tax year
+# 2026 (updated to 30 June 2025 per the Finance Act 2025), cross-checked against
+# KPMG (Taseer Hadi), TAG & Co., A.F. Ferguson/PwC and Grant Thornton. Non-filer =
+# filer rate uplifted 100% under the Tenth Schedule (a clean 2x for these sections).
+# Where a section splits company vs individual/AOP, the COMPANY rate is used (ERP
+# suppliers are usually companies); the non-company variants are noted below.
+# Still verify against the live card before production; rates change every Finance Act.
+#   Source: https://download1.fbr.gov.pk/Docs/20258181281745641WHT-RateCard.pdf
+# Per-section caveats:
+#   153(1)(a) goods:    5/10 company (5.5/11 individual-AOP). Was 4.5% pre-FA2025.
+#   153(1)(b) services: 15/30 is the TY2026 GENERAL rate (FA2025 merged the old
+#                       9%/11% company/non-company split). Reduced carve-outs exist:
+#                       specified services (transport, courier, manpower, security,
+#                       engineering) 6/12; IT & IT-enabled 4/8; media advertising
+#                       1.5/3. Pick per supplier's service type. (Note: PwC's live
+#                       page shows 7/14 because it has rolled forward to TY2027.)
+#   153(1)(c) contracts: 7.5/15 company (8/16 individual-AOP; sportspersons 15/30).
+#   233 commission:      12/24 general (advertising agents 10/20; life-insurance 8/16).
+#   155 rent:            15/30 flat for a COMPANY payee. Individual/AOP landlords are
+#                        SLAB-based (not a flat %), so they need separate handling and
+#                        are intentionally not seeded as a flat category here.
 WHT_SECTIONS = [
 	{"section": "153(1)(a)", "label": "Sale of Goods", "filer": 5.0, "non_filer": 10.0},
-	{"section": "153(1)(b)", "label": "Services", "filer": 10.0, "non_filer": 20.0},
-	{"section": "153(1)(c)", "label": "Execution of Contracts", "filer": 7.0, "non_filer": 14.0},
-	{"section": "233", "label": "Brokerage & Commission", "filer": 10.0, "non_filer": 20.0},
-	{"section": "155", "label": "Rent of Immovable Property", "filer": 5.0, "non_filer": 10.0},
+	{"section": "153(1)(b)", "label": "Services", "filer": 15.0, "non_filer": 30.0},
+	{"section": "153(1)(c)", "label": "Execution of Contracts", "filer": 7.5, "non_filer": 15.0},
+	{"section": "233", "label": "Brokerage & Commission", "filer": 12.0, "non_filer": 24.0},
+	{"section": "155", "label": "Rent of Immovable Property (Company)", "filer": 15.0, "non_filer": 30.0},
 ]
 
 STATUSES = ("Filer", "Non-Filer")
