@@ -81,6 +81,7 @@ app_license = "mit"
 jinja = {
 	"methods": [
 		"pakistan_compliance.utils.money_in_words_urdu",
+		"pakistan_compliance.utils.show_urdu_in_words",
 	],
 }
 

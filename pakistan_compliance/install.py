@@ -203,11 +203,28 @@ def ensure_default_print_formats():
 			)
 
 
+def ensure_settings_defaults():
+	"""Seed one-time defaults on Pakistan Tax Settings without overwriting the
+	customer's choices. A Single's field defaults only take effect once the doc is
+	saved, and an unset Check reads back as 0, so we persist the intended default
+	here. Only writes when the value has never been set (skip-if-exists)."""
+	if not frappe.db.exists("DocType", "Pakistan Tax Settings"):
+		return
+	# Urdu amount-in-words: on by default. A field is only in the Singles dict once
+	# it has been written, so "absent" means never set (vs. a stored 0, which is a
+	# customer turning it off and must be left alone).
+	stored = frappe.db.get_singles_dict("Pakistan Tax Settings")
+	if "show_urdu_in_words" not in stored:
+		frappe.db.set_single_value("Pakistan Tax Settings", "show_urdu_in_words", 1)
+
+
 def after_install():
 	ensure_custom_fields()
 	ensure_default_print_formats()
+	ensure_settings_defaults()
 
 
 def after_migrate():
 	ensure_custom_fields()
 	ensure_default_print_formats()
+	ensure_settings_defaults()

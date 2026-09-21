@@ -23,7 +23,11 @@ Render-verified with sample data.
 Jinja through the `jinja` hook so print formats call it at render time (no stored field). Handles
 paisa sub-units, negative totals (credit/debit notes), rounding carry, and per-currency unit names
 (PKR roupe/paisa, plus USD/EUR/GBP/SAR/AED/INR; unknown codes used verbatim, never mislabeled). The
-FBR Sales Tax Invoice renders it RTL under the English line. 8 offline tests (test_utils.py).
+FBR Sales Tax Invoice renders it RTL under the English line, gated by a **"Show Urdu Amount in
+Words"** toggle (a Print Formats section on Pakistan Tax Settings, on by default). Because a Single's
+field default only applies once saved and an unset Check reads back as 0, install.py seeds the
+default to on when it has never been set, while leaving a customer's explicit off alone. 11 offline
+tests (test_utils.py).
 
 Phase 2 shipped: a **"Set up Pakistan Taxes"** button on Pakistan Tax Settings (prompts for a
 Company) that runs `tax_setup.setup_company_taxes` to idempotently create, under the company's

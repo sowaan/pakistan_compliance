@@ -6,6 +6,8 @@
  "field_order": [
   "enabled",
   "default_province",
+  "print_section",
+  "show_urdu_in_words",
   "fbr_section",
   "fbr_environment",
   "fbr_base_url",
@@ -27,6 +29,18 @@
    "fieldtype": "Select",
    "label": "Default Province",
    "options": "\nPunjab\nSindh\nKhyber Pakhtunkhwa\nBalochistan\nIslamabad Capital Territory\nGilgit-Baltistan\nAzad Jammu and Kashmir"
+  },
+  {
+   "fieldname": "print_section",
+   "fieldtype": "Section Break",
+   "label": "Print Formats"
+  },
+  {
+   "default": "1",
+   "description": "Show the invoice total spelled out in Urdu on Pakistan print formats, below the English amount in words.",
+   "fieldname": "show_urdu_in_words",
+   "fieldtype": "Check",
+   "label": "Show Urdu Amount in Words"
   },
   {
    "collapsible": 1,
@@ -75,7 +89,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-09-21 00:00:00.000000",
+ "modified": "2026-09-21 12:30:00.000000",
  "modified_by": "Administrator",
  "module": "Pakistan Compliance",
  "name": "Pakistan Tax Settings",
