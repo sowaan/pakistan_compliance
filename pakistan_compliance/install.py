@@ -254,13 +254,54 @@ def ensure_settings_defaults():
 		frappe.db.set_single_value("Pakistan Tax Settings", "show_urdu_in_words", 1)
 
 
+def ensure_pk_desktop_icon():
+	"""On v16, make the desktop icon the Pakistan Compliance *workspace* (a "Link"
+	Desktop Icon) with its `app` set, so it opens in the same tab and shows the
+	pk_compliance logo (from the public/icons sprite) instead of a letter avatar.
+	An "App"-type icon (e.g. a leftover from add_to_apps_screen) is removed.
+	Mirrors the tarceel_erpnext approach. Idempotent; no-op on v15."""
+	if not frappe.db.exists("DocType", "Desktop Icon"):
+		return  # not v16
+
+	from frappe.desk.doctype.desktop_icon.desktop_icon import create_desktop_icons
+
+	current = frappe.db.get_value(
+		"Desktop Icon", "Pakistan Compliance", ["icon_type", "app", "parent_icon", "icon"], as_dict=True
+	)
+	if current and current.icon_type == "App":
+		frappe.delete_doc("Desktop Icon", "Pakistan Compliance", ignore_permissions=True, force=True)
+		current = None
+
+	if not current:
+		create_desktop_icons()  # regenerates the workspace Link icon
+		current = frappe.db.get_value(
+			"Desktop Icon", "Pakistan Compliance", ["icon_type", "app", "parent_icon", "icon"], as_dict=True
+		)
+
+	# Frappe sets `app_name` (not `app`) on workspace icons, so the logo lookup
+	# fails and it falls back to a letter avatar; fix `app` and detach from folders.
+	if current:
+		changes = {}
+		if current.app != "pakistan_compliance":
+			changes["app"] = "pakistan_compliance"
+		if current.get("icon") != "pk-compliance":
+			changes["icon"] = "pk-compliance"
+		if current.parent_icon:
+			changes["parent_icon"] = None
+		if changes:
+			frappe.db.set_value("Desktop Icon", "Pakistan Compliance", changes)
+			frappe.cache.hdel("desktop_icons", "Administrator")
+
+
 def after_install():
 	ensure_custom_fields()
 	ensure_default_print_formats(force=True)
 	ensure_settings_defaults()
+	ensure_pk_desktop_icon()
 
 
 def after_migrate():
 	ensure_custom_fields()
 	ensure_default_print_formats(force=False)
 	ensure_settings_defaults()
+	ensure_pk_desktop_icon()

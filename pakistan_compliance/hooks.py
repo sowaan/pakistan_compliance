@@ -7,21 +7,22 @@ app_license = "mit"
 # Small (128x128) icon for the navbar / app switcher; the full 500x500 is used for
 # the marketplace listing.
 app_logo_url = "/assets/pakistan_compliance/images/pk_compliance_sm.png"
+# Load our icon sprite into the desk so the workspace/desktop icon "pk-compliance"
+# (symbol id "icon-pk-compliance") renders the logo instead of a letter avatar.
+app_include_icons = ["/assets/pakistan_compliance/icons/pk_compliance-icons.svg"]
 
 # Apps
 # ------------------
 
 # required_apps = []
 
-# Shown as an app tile (with the pk_compliance icon) on the v15+ /apps launcher.
-add_to_apps_screen = [
-	{
-		"name": "pakistan_compliance",
-		"logo": "/assets/pakistan_compliance/images/pk_compliance_sm.png",
-		"title": "Pakistan Compliance",
-		"route": "/app/pakistan-compliance",
-	}
-]
+# Note: we deliberately do NOT register `add_to_apps_screen`. On v16 that creates
+# an "App"-type desktop icon whose route is an absolute URL (opens in a new tab)
+# and which renders a letter avatar ("P") instead of the logo. Instead the desktop
+# icon is the workspace itself (a "Link" icon) with its `app` set, configured in
+# install.ensure_pk_desktop_icon; the logo comes from the custom icon sprite
+# public/icons/pk_compliance-icons.svg (symbol id "icon-pk-compliance"), referenced
+# by the workspace's `icon` field ("pk-compliance").
 
 # Includes in <head>
 # ------------------
