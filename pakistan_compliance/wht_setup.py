@@ -145,6 +145,38 @@ def setup_company_wht(company):
 	return created
 
 
+def sync_supplier_wht_category(doc, method=None):
+	"""Keep a supplier's WHT category variant in sync with its Filer status.
+
+	When a supplier already has one of our seeded 'Pakistan WHT ... (Filer)' /
+	'(Non-Filer)' categories (which fixes the income-tax *section*), and its Filer
+	Status (ATL) says the other variant, switch to the matching variant of the SAME
+	section so the correct rate applies. Does nothing if no Pakistan WHT category is
+	set (we can't guess the section) or if it already matches. Supplier validate hook."""
+	status = doc.get("custom_filer_status")  # "Filer" / "Non-Filer"
+	category = doc.get("tax_withholding_category")
+	if not (status and category and category.startswith("Pakistan WHT ")):
+		return
+	if not (category.endswith("(Filer)") or category.endswith("(Non-Filer)")):
+		return
+
+	desired_suffix = f"({status})"
+	if category.endswith(desired_suffix):
+		return  # already the right variant
+
+	base = category.rsplit(" (", 1)[0]  # drop the trailing "(Filer)"/"(Non-Filer)"
+	target = f"{base} ({status})"
+	if frappe.db.exists("Tax Withholding Category", target):
+		doc.tax_withholding_category = target
+		frappe.msgprint(
+			_("Withholding tax category switched to {0} to match the {1} status.").format(
+				frappe.bold(target), frappe.bold(status)
+			),
+			alert=True,
+			indicator="blue",
+		)
+
+
 def propagate_item_wht(doc, method=None):
 	"""Make supplier-level WHT configuration work on ERPNext v16.
 
