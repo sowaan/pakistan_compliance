@@ -293,6 +293,21 @@ def ensure_pk_desktop_icon():
 			frappe.cache.hdel("desktop_icons", "Administrator")
 
 
+def boot_fix_desktop_icon(bootinfo=None):
+	"""Fresh-install safety net (extend_bootinfo hook). Frappe creates the workspace
+	Desktop Icon AFTER after_install runs, so ensure_pk_desktop_icon can't set its
+	`app` there and the tile shows a letter avatar until the next migrate. Fix it
+	lazily on boot; a cheap no-op once `app` is set."""
+	try:
+		if not frappe.db.exists("DocType", "Desktop Icon"):
+			return
+		di = frappe.db.get_value("Desktop Icon", "Pakistan Compliance", ["name", "app"], as_dict=True)
+		if di and di.app != "pakistan_compliance":
+			ensure_pk_desktop_icon()
+	except Exception:
+		pass
+
+
 def after_install():
 	ensure_custom_fields()
 	ensure_default_print_formats(force=True)
