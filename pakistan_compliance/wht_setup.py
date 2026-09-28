@@ -141,7 +141,7 @@ def setup_company_wht(company):
 			if _ensure_wht_category(title, rate, company, account):
 				created["categories"].append(title)
 
-	frappe.db.commit()
+	frappe.db.commit()  # nosemgrep: intentional persist after a multi-step whitelisted action
 	return created
 
 

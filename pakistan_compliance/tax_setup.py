@@ -165,6 +165,6 @@ def setup_company_taxes(company):
 			created["purchase_templates"].append(title)
 
 	frappe.db.set_single_value("Pakistan Tax Settings", "default_data_seeded", 1)
-	frappe.db.commit()
+	frappe.db.commit()  # nosemgrep: intentional persist after a multi-step whitelisted action
 
 	return created

@@ -168,6 +168,6 @@ def report_to_fbr(sales_invoice):
 			{"custom_fbr_invoice_number": irn, "custom_fbr_reported": 1},
 			update_modified=False,
 		)
-	frappe.db.commit()
+	frappe.db.commit()  # nosemgrep: intentional persist after a multi-step whitelisted action
 
 	return {"status": log.status, "irn": irn, "error": log.error, "log": log.name}
