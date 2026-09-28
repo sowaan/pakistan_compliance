@@ -130,6 +130,9 @@ after_migrate = "pakistan_compliance.install.after_migrate"
 
 # Desk Notifications
 # ------------------
+# Fresh-install safety net for the desktop icon logo (see install.boot_fix_desktop_icon).
+extend_bootinfo = "pakistan_compliance.install.boot_fix_desktop_icon"
+
 # See frappe.core.notifications.get_notification_config
 
 # notification_config = "pakistan_compliance.notifications.get_notification_config"
