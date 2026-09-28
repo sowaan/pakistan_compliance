@@ -1,7 +1,7 @@
 {
  "app": "pakistan_compliance",
  "charts": [],
- "content": "[{\"id\": \"pk_head\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Pakistan Compliance</b></span>\", \"col\": 12}}, {\"id\": \"pk_sc1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pakistan Tax Settings\", \"col\": 3}}, {\"id\": \"pk_sc2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Taxes and Charges Template\", \"col\": 3}}, {\"id\": \"pk_card_setup\", \"type\": \"card\", \"data\": {\"card_name\": \"Setup\", \"col\": 4}}, {\"id\": \"pk_card_taxes\", \"type\": \"card\", \"data\": {\"card_name\": \"Taxes\", \"col\": 4}}, {\"id\": \"pk_card_wht\", \"type\": \"card\", \"data\": {\"card_name\": \"Withholding Tax\", \"col\": 4}}, {\"id\": \"pk_card_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"Reports\", \"col\": 4}}]",
+ "content": "[{\"id\": \"pk_head\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Pakistan Compliance</b></span>\", \"col\": 12}}, {\"id\": \"pk_sc_wizard\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Setup Wizard\", \"col\": 3}}, {\"id\": \"pk_sc1\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pakistan Tax Settings\", \"col\": 3}}, {\"id\": \"pk_sc2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Taxes and Charges Template\", \"col\": 3}}, {\"id\": \"pk_card_setup\", \"type\": \"card\", \"data\": {\"card_name\": \"Setup\", \"col\": 4}}, {\"id\": \"pk_card_taxes\", \"type\": \"card\", \"data\": {\"card_name\": \"Taxes\", \"col\": 4}}, {\"id\": \"pk_card_wht\", \"type\": \"card\", \"data\": {\"card_name\": \"Withholding Tax\", \"col\": 4}}, {\"id\": \"pk_card_reports\", \"type\": \"card\", \"data\": {\"card_name\": \"Reports\", \"col\": 4}}]",
  "creation": "2026-09-21 13:06:27.796681",
  "custom_blocks": [],
  "docstatus": 0,
@@ -161,7 +161,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-09-21 19:15:00.000000",
+ "modified": "2026-09-29 13:00:00.000000",
  "modified_by": "Administrator",
  "module": "Pakistan Compliance",
  "name": "Pakistan Compliance",
@@ -172,6 +172,13 @@
  "roles": [],
  "sequence_id": 0.0,
  "shortcuts": [
+  {
+   "color": "Green",
+   "doc_view": "",
+   "label": "Setup Wizard",
+   "link_to": "pakistan-compliance-setup",
+   "type": "Page"
+  },
   {
    "color": "Grey",
    "doc_view": "",

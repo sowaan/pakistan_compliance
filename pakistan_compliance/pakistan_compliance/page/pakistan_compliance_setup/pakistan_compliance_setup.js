@@ -8,8 +8,23 @@ frappe.pages["pakistan-compliance-setup"].on_page_load = function (wrapper) {
 		single_column: true,
 	});
 	inject_styles();
+	document.body.classList.add("pk-wizard-fs");
 	new PkSetupWizard(page).init();
 };
+
+// Full-screen wizard: hide the desk workspace sidebar while it's open (so it does
+// not read as living "under" whatever workspace was last active), restore on exit.
+frappe.pages["pakistan-compliance-setup"].on_page_show = function () {
+	document.body.classList.add("pk-wizard-fs");
+};
+if (!frappe._pk_wizard_router_hook) {
+	frappe._pk_wizard_router_hook = true;
+	frappe.router.on("change", () => {
+		if ((frappe.get_route() || [])[0] !== "pakistan-compliance-setup") {
+			document.body.classList.remove("pk-wizard-fs");
+		}
+	});
+}
 
 const M = "pakistan_compliance";
 const GREEN = "#0b6e4f";
@@ -356,6 +371,7 @@ class PkSetupWizard {
 function inject_styles() {
 	if (document.getElementById("pk-wiz-styles")) return;
 	const css = `
+	body.pk-wizard-fs .body-sidebar-container { display: none !important; }
 	.pk-wiz-host { background: var(--gray-100, #f4f5f6); padding: 24px 16px; min-height: calc(100vh - 120px); }
 	.pk-wiz-loading { text-align:center; color: var(--text-muted); padding: 80px 0; }
 	.pk-spin { display:inline-block; width:14px;height:14px;border:2px solid #d7dde0;border-top-color:${GREEN};border-radius:50%;animation:pkspin .7s linear infinite;vertical-align:middle;}
