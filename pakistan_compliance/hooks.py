@@ -7,7 +7,7 @@ app_license = "mit"
 source_link = "https://github.com/sowaan/pakistan_compliance"
 # Small (128x128) icon for the navbar / app switcher; the full 500x500 is used for
 # the marketplace listing.
-app_logo_url = "/assets/pakistan_compliance/images/pk_compliance_sm.png"
+app_logo_url = "/assets/pakistan_compliance/images/pk_compliance_icon.svg"
 # Load our icon sprite into the desk so the workspace/desktop icon "pk-compliance"
 # (symbol id "icon-pk-compliance") renders the logo instead of a letter avatar.
 app_include_icons = ["/assets/pakistan_compliance/icons/pk_compliance-icons.svg"]
