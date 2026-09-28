@@ -15,7 +15,7 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 
 from pakistan_compliance import wht_setup
-from pakistan_compliance.wht_setup import propagate_item_wht
+from pakistan_compliance.wht_setup import propagate_item_wht, sync_supplier_wht_category
 
 
 class TestWhtSetup(FrappeTestCase):
@@ -65,3 +65,43 @@ class TestWhtPropagation(FrappeTestCase):
 		pi.apply_tds = 0
 		propagate_item_wht(pi)
 		self.assertFalse(pi.items[0].get("tax_withholding_category"))
+
+
+class TestSupplierWhtSync(FrappeTestCase):
+	"""Supplier Filer status -> WHT category variant sync (needs the seeded categories)."""
+
+	def _supplier(self, status, category):
+		s = frappe.new_doc("Supplier")
+		s.supplier_name = "SYNC-TEST"
+		s.custom_filer_status = status
+		s.tax_withholding_category = category
+		return s
+
+	def test_switches_variant_to_match_status(self):
+		s = self._supplier("Non-Filer", "Pakistan WHT 153(1)(b) Services (Filer)")
+		sync_supplier_wht_category(s)
+		self.assertEqual(s.tax_withholding_category, "Pakistan WHT 153(1)(b) Services (Non-Filer)")
+
+	def test_keeps_section_with_parentheses(self):
+		# Section labels contain their own parens (155 ... (Company)); only the
+		# trailing (Filer)/(Non-Filer) variant is swapped.
+		s = self._supplier("Filer", "Pakistan WHT 155 Rent of Immovable Property (Company) (Non-Filer)")
+		sync_supplier_wht_category(s)
+		self.assertEqual(
+			s.tax_withholding_category, "Pakistan WHT 155 Rent of Immovable Property (Company) (Filer)"
+		)
+
+	def test_noop_when_already_matching(self):
+		s = self._supplier("Filer", "Pakistan WHT 153(1)(b) Services (Filer)")
+		sync_supplier_wht_category(s)
+		self.assertEqual(s.tax_withholding_category, "Pakistan WHT 153(1)(b) Services (Filer)")
+
+	def test_noop_for_non_pakistan_category(self):
+		s = self._supplier("Non-Filer", "Some Other Category")
+		sync_supplier_wht_category(s)
+		self.assertEqual(s.tax_withholding_category, "Some Other Category")
+
+	def test_noop_when_no_category(self):
+		s = self._supplier("Non-Filer", None)
+		sync_supplier_wht_category(s)  # must not raise
+		self.assertFalse(s.tax_withholding_category)

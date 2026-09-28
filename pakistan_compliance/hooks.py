@@ -168,6 +168,10 @@ doc_events = {
 	"Purchase Order": {
 		"validate": "pakistan_compliance.wht_setup.propagate_item_wht",
 	},
+	# Keep the supplier's WHT category variant in sync with its Filer/Non-Filer status.
+	"Supplier": {
+		"validate": "pakistan_compliance.wht_setup.sync_supplier_wht_category",
+	},
 }
 
 # Scheduled Tasks
