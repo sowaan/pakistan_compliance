@@ -44,8 +44,13 @@ function show_pk_setup_banner(companies, dismiss_key) {
 				${__("Later")}</button>
 		</div>`);
 
-	const $target = $(".layout-main-section-wrapper").first();
-	if ($target.length) $target.prepend($banner);
+	// `.main-section` is a plain block scroll container (header, #body, footer
+	// stacked in normal flow). Insert as a sibling right after <header> so the
+	// banner stacks full-width below the desk navbar and pushes #body down.
+	// (Prepending into `.layout-main-section-wrapper` put it inside the flex row
+	// alongside the sidebar, so it rendered as a left column with content beside it.)
+	const $header = $(".main-section > header");
+	if ($header.length) $header.after($banner);
 	else $("body").prepend($banner);
 
 	$("#pk-banner-setup").on("click", () => {
