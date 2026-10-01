@@ -1,5 +1,5 @@
 <div align="center">
-	<img src="pakistan_compliance/public/images/pk_compliance.png" alt="Pakistan Compliance" height="128"/>
+	<img src="pakistan_compliance/public/images/pk_compliance_icon.png" alt="Pakistan Compliance" height="128"/>
 
 # Pakistan Compliance
 
